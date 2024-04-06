@@ -224,6 +224,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_ALDRIVER),y)
 	rm -f $(INSTALLDIR)/www/Advanced_aliyundrive.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_cloudflare),y)
+	rm -f $(INSTALLDIR)/www/Advance_cloudflare.asp
+endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_SQM),y)
 	rm -f $(INSTALLDIR)/www/Advanced_SQM.asp
 endif
