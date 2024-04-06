@@ -186,9 +186,6 @@ ifneq ($(CONFIG_FIRMWARE_INCLUDE_SCUTCLIENT),y)
 	rm -f $(INSTALLDIR)/www/scutclient_log.asp
 	rm -f $(INSTALLDIR)/www/scutclient_action.asp
 endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME),y)
-	rm -f $(INSTALLDIR)/www/Advanced_adguardhome.asp
-endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_MENTOHUST),y)
 	rm -f $(INSTALLDIR)/www/mentohust.asp
 	rm -f $(INSTALLDIR)/www/mentohust_log.asp
@@ -202,11 +199,32 @@ ifneq ($(CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS),y)
 	rm -f $(INSTALLDIR)/www/Shadowsocks_action.asp
 	rm -f $(INSTALLDIR)/www/Shadowsocks_log.asp
 endif
+
+ifeq ($(CONFIG_FIRMWARE_WEBUI_HIDE_VPN),y)
+	rm -f $(INSTALLDIR)/www/vpn_clients.asp
+	rm -f $(INSTALLDIR)/www/vpncli.asp
+	rm -f $(INSTALLDIR)/www/vpnsrv.asp
+endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_ADBYBY),y)
 	rm -f $(INSTALLDIR)/www/Advanced_adbyby.asp
 endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_ALIDDNS),y)
 	rm -f $(INSTALLDIR)/www/Advanced_aliddns.asp
+endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_cloudflare),y)
+	rm -f $(INSTALLDIR)/www/Advance_cloudflare.asp
+endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME),y)
+	rm -f $(INSTALLDIR)/www/Advanced_adguardhome.asp
+endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_KOOLPROXY),y)
+	rm -f $(INSTALLDIR)/www/Advanced_koolproxy.asp
+endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_CADDY),y)
+	rm -f $(INSTALLDIR)/www/Advanced_caddy.asp
+endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_WYY),y)
+	rm -f $(INSTALLDIR)/www/Advanced_wyy.asp
 endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_ZEROTIER),y)
 	rm -f $(INSTALLDIR)/www/Advanced_zerotier.asp
@@ -215,30 +233,7 @@ ifeq ($(CONFIG_FIRMWARE_INCLUDE_FRPC)_$(CONFIG_FIRMWARE_INCLUDE_FRPS), n_n)
 	rm -f $(INSTALLDIR)/www/Advanced_frp.asp
 	rm -f $(INSTALLDIR)/www/Advanced_frp_log.asp
 endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_DDNSTO),y)
-	rm -f $(INSTALLDIR)/www/Advanced_ddnsto.asp
-endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_WIREGUARD),y)
-	rm -f $(INSTALLDIR)/www/Advanced_wireguard.asp
-endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_ALDRIVER),y)
-	rm -f $(INSTALLDIR)/www/Advanced_aliyundrive.asp
-endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_cloudflare),y)
-	rm -f $(INSTALLDIR)/www/Advance_cloudflare.asp
-endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_SQM),y)
-	rm -f $(INSTALLDIR)/www/Advanced_SQM.asp
-endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_SMARTDNS),y)
-	rm -f $(INSTALLDIR)/www/Advanced_smartdns.asp
-endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_SERVER),y)
-	rm -f $(INSTALLDIR)/www/vpnsrv.asp
-endif
-ifneq ($(CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_CLIENT),y)
-	rm -f $(INSTALLDIR)/www/vpn_clients.asp
-	rm -f $(INSTALLDIR)/www/vpncli.asp
-endif
+
+
 clean:
 	@echo "Clean www romfs"
