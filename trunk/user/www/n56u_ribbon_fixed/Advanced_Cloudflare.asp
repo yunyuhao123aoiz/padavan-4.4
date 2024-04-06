@@ -43,7 +43,12 @@ function initial(){
 
 	if (!login_safe())
 	textarea_scripts_enabled(0);
+}
 
+function showmenu(){
+showhide_div('zelink', found_app_zerotier());
+showhide_div('ddlink', found_app_ddnsto());
+showhide_div('wilink', found_app_wireguard());
 }
 
 function textarea_scripts_enabled(v){
@@ -55,7 +60,7 @@ function applyRule(){
 	showLoading();
 	
 	document.form.action_mode.value = " Apply ";
-	document.form.current_page.value = "/Advanced_Extensions_cloudflare.asp";
+	document.form.current_page.value = "/Advanced_cloudflare.asp";
 	document.form.next_page.value = "";
 	
 	document.form.submit();
@@ -101,7 +106,7 @@ function change_cloudflare_enable_bridge(mflag){
 
 	<form method="post" name="form" id="ruleForm" action="/start_apply.htm" target="hidden_frame">
 
-	<input type="hidden" name="current_page" value="Advanced_Extensions_cloudflare.asp">
+	<input type="hidden" name="current_page" value="Advanced_cloudflare.asp">
 	<input type="hidden" name="next_page" value="">
 	<input type="hidden" name="next_host" value="">
 	<input type="hidden" name="sid_list" value="LANHostConfig;General;">
@@ -133,8 +138,24 @@ function change_cloudflare_enable_bridge(mflag){
 	<div class="row-fluid">
 	<div class="span12">
 	<div class="box well grad_colour_dark_blue">
-	<h2 class="box_head round_top">Cloudflare 域名解析</h2>
-	<div class="round_bottom">
+							<h2 class="box_head round_top"><#menu5_23#> - <#menu5_30#></h2>
+							<div class="round_bottom">
+							<div>
+                            <ul class="nav nav-tabs" style="margin-bottom: 10px;">
+								<li class="active">
+                                    <a href="Advanced_Cloudflare.asp"><#menu5_23_1#></a>
+                                </li>
+								<li id="zelink" style="display:none">
+                                    <a href="Advanced_zerotier.asp"><#menu5_32_1#></a>
+                                </li>
+								<li id="ddlink" style="display:none">
+                                    <a href="Advanced_ddnsto.asp"><#menu5_34_1#></a>
+                                </li>
+								<li id="wilink" style="display:none">
+                                    <a href="Advanced_wireguard.asp"><#menu5_35_1#></a>
+                                </li>
+                            </ul>
+                        </div>
 	<div class="row-fluid">
 	<div id="tabMenu" class="submenuBlock"></div>
 	<div class="alert alert-info" style="margin: 10px;">使用 Cloudflare 实现顶级个人域名的 ddns 服务。 <a href="https://www.cloudflare.com" target="blank"><i><u>https://www.cloudflare.com</u></i></a>
