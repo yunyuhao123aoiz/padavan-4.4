@@ -1,20 +1,30 @@
-#!/bin/bash
+#!/bin/sh
 #copyright by hiboy
-source /etc/storage/script/init.sh
-cloudflare_enable=`nvram get cloudflare_enable`
-[ -z $cloudflare_enable ] && cloudflare_enable=1 && nvram set cloudflare_enable=1
-if [ "$cloudflare_enable" != "1" ] ; then
-#nvramshow=`nvram showall | grep '=' | grep cloudflare | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
+#source /etc/storage/init.sh
+#ACTION=$1
+export PATH='/etc/storage/bin:/tmp/script:/etc/storage/script:/opt/usr/sbin:/opt/usr/bin:/opt/sbin:/opt/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin'
+export LD_LIBRARY_PATH=/lib:/opt/lib
+ACTION=$1
+scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
+#echo $scriptfilepath
+scriptpath=$(cd "$(dirname "$0")"; pwd)
+#echo $scriptpath
+scriptname=$(basename $0)
 
-cloudflare_token='U1k-yxud75zbmvm5D4_hD2NRuZ-etiVa8SfvtwTt'
-cloudflare_Email='297942383@qq.com'
-cloudflare_Key='3af594fd2ebfac51f112293298e17612658ce'
-cloudflare_domian='yunyue.eu.org'
-cloudflare_host='a1'
+aliddns_enable=`nvram get cloudflare_enable`
+[ -z $cloudflares_enable ] && cloudflare_enable=0 && nvram set cloudflare_enable=0
+if [ "$cloudflare_enable" != "0" ] ; then
+#nvramshow=`nvram showall | grep '=' | grep aliddns | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
+
+cloudflare_token=`nvram get cloudflare_token`
+cloudflare_Email=`nvram get cloudflare_Email`
+cloudflare_Key=`nvram get cloudflare_Key`
+cloudflare_domian=`nvram get cloudflare_domian`
+cloudflare_host=`nvram get cloudflare_host`
 cloudflare_domian2=`nvram get cloudflare_domian2`
 cloudflare_host2=`nvram get cloudflare_host2`
-cloudflare_domian6='yunyue.eu.org'
-cloudflare_host6='dns'
+cloudflare_domian6=`nvram get cloudflare_domian6`
+cloudflare_host6=`nvram get cloudflare_host6`
 cloudflare_interval=`nvram get cloudflare_interval`
 
 if [ ! -z "$cloudflare_token" ] ; then
@@ -142,7 +152,7 @@ sleep $cloudflare_interval
 [ ! -s "`which curl`" ] && cloudflare_restart
 #nvramshow=`nvram showall | grep '=' | grep cloudflare | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
 cloudflare_enable=`nvram get cloudflare_enable`
-[ "$cloudflare_enable" = "0" ] && cloudflare_close && exit 1;
+[ "$cloudflare_enable" = "0" ] && cloudflare_close && exit 0;
 if [ "$cloudflare_enable" = "1" ] ; then
 	cloudflare_start
 fi
@@ -189,8 +199,8 @@ fi
 if [ "$cloudflare_domian6"x != "x" ] && [ "$cloudflare_host6"x != "x" ] ; then
 	sleep 1
 	IPv6=1
-	DOMAIN="yunyue.eu.org"
-	HOST="dns"
+	DOMAIN="$cloudflare_domian6"
+	HOST="$cloudflare_host6"
 	RECORD_ID=""
 	arDdnsCheck
 fi
@@ -535,4 +545,6 @@ keep)
 	cloudflare_check
 	;;
 esac
+
+
 
