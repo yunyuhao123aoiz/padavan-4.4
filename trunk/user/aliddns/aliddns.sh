@@ -11,10 +11,10 @@ scriptpath=$(cd "$(dirname "$0")"; pwd)
 #echo $scriptpath
 scriptname=$(basename $0)
 
-cloudflare_enable=`nvram get cloudflare_enable`
-[ -z $cloudflare_enable ] && cloudflare_enable=0 && nvram set cloudflare_enable=0
-if [ "$cloudflare_enable" != "0" ] ; then
-#nvramshow=`nvram showall | grep '=' | grep cloudflare | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
+aliddns_enable=`nvram get aliddns_enable`
+[ -z $aliddns_enable ] && aliddns_enable=0 && nvram set aliddns_enable=0
+if [ "$aliddns_enable" != "0" ] ; then
+#nvramshow=`nvram showall | grep '=' | grep aliddns | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
 
 cloudflare_token=`nvram get cloudflare_token`
 cloudflare_Email=`nvram get cloudflare_Email`
@@ -65,123 +65,115 @@ cloudflare_renum=`nvram get cloudflare_renum`
 
 fi
 
-if [ ! -z "$(echo $scriptfilepath | grep -v "/tmp/script/" | grep cloudflare)" ]  && [ ! -s /tmp/script/_cloudflare ]; then
+if [ ! -z "$(echo $scriptfilepath | grep -v "/tmp/script/" | grep aliddns)" ]  && [ ! -s /tmp/script/_aliddns ]; then
 	mkdir -p /tmp/script
-	{ echo '#!/bin/bash' ; echo $scriptfilepath '"$@"' '&' ; } > /tmp/script/_cloudflare
-	chmod 777 /tmp/script/_cloudflare
+	{ echo '#!/bin/sh' ; echo $scriptfilepath '"$@"' '&' ; } > /tmp/script/_aliddns
+	chmod 777 /tmp/script/_aliddns
 fi
 
-cloudflare_restart () {
+aliddns_restart () {
 
-relock="/var/lock/cloudflare_restart.lock"
+relock="/var/lock/aliddns_restart.lock"
 if [ "$1" = "o" ] ; then
-	nvram set cloudflare_renum="0"
+	nvram set aliddns_renum="0"
 	[ -f $relock ] && rm -f $relock
 	return 0
 fi
 if [ "$1" = "x" ] ; then
 	if [ -f $relock ] ; then
-		logger -t "【cloudflare】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		logger -t "【aliddns】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
 		exit 0
 	fi
-	cloudflare_renum=${cloudflare_renum:-"0"}
-	cloudflare_renum=`expr $cloudflare_renum + 1`
-	nvram set cloudflare_renum="$cloudflare_renum"
-	if [ "$cloudflare_renum" -gt "3" ] ; then
+	aliddns_renum=${aliddns_renum:-"0"}
+	aliddns_renum=`expr $aliddns_renum + 1`
+	nvram set aliddns_renum="$aliddns_renum"
+	if [ "$aliddns_renum" -gt "2" ] ; then
 		I=19
 		echo $I > $relock
-		logger -t "【cloudflare】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		logger -t "【aliddns】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
 		while [ $I -gt 0 ]; do
 			I=$(($I - 1))
 			echo $I > $relock
 			sleep 60
-			[ "$(nvram get cloudflare_renum)" = "0" ] && exit 0
+			[ "$(nvram get aliddns_renum)" = "0" ] && exit 0
 			[ $I -lt 0 ] && break
 		done
-		nvram set cloudflare_renum="1"
+		nvram set aliddns_renum="0"
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-nvram set cloudflare_status=0
+nvram set aliddns_status=0
 eval "$scriptfilepath &"
 exit 0
 }
 
-cloudflare_get_status () {
+aliddns_get_status () {
 
-A_restart=`nvram get cloudflare_status`
-B_restart="$cloudflare_enable$cloudflare_token$cloudflare_Email$cloudflare_Key$cloudflare_domian$cloudflare_host$cloudflare_domian2$cloudflare_host2$cloudflare_domian6$cloudflare_host6$cloudflare_interval$(cat /etc/storage/ddns_script.sh | grep -v '^#' | grep -v '^$')"
+A_restart=`nvram get aliddns_status`
+B_restart="$aliddns_enable$aliddns_interval$aliddns_ak$aliddns_sk$aliddns_domain$aliddns_name$aliddns_domain2$aliddns_name2$aliddns_domain6$aliddns_name6$aliddns_ttl$(cat /etc/storage/ddns_script.sh | grep -v '^#' | grep -v "^$")"
 B_restart=`echo -n "$B_restart" | md5sum | sed s/[[:space:]]//g | sed s/-//g`
-cut_B_re
 if [ "$A_restart" != "$B_restart" ] ; then
-	nvram set cloudflare_status=$B_restart
+	nvram set aliddns_status=$B_restart
 	needed_restart=1
 else
 	needed_restart=0
 fi
 }
 
-cloudflare_check () {
+aliddns_check () {
 
-cloudflare_get_status
-if [ "$cloudflare_enable" != "1" ] && [ "$needed_restart" = "1" ] ; then
-	[ ! -z "$(ps -w | grep "$scriptname keep" | grep -v grep )" ] && logger -t "【cloudflare动态域名】" "停止 cloudflare" && cloudflare_close
+aliddns_get_status
+if [ "$aliddns_enable" != "1" ] && [ "$needed_restart" = "1" ] ; then
+	[ ! -z "$(ps -w | grep "$scriptname keep" | grep -v grep )" ] && logger -t "【aliddns动态域名】" "停止 aliddns" && aliddns_close
 	{ kill_ps "$scriptname" exit0; exit 0; }
 fi
-if [ "$cloudflare_enable" = "1" ] ; then
+if [ "$aliddns_enable" = "1" ] ; then
 	if [ "$needed_restart" = "1" ] ; then
-		cloudflare_close
-		sleep 1
+		aliddns_close
 		eval "$scriptfilepath keep &"
 		exit 0
 	else
-		[ -z "$(ps -w | grep "$scriptname keep" | grep -v grep )" ] || [ ! -s "`which curl`" ] && cloudflare_restart
+		[ -z "$(ps -w | grep "$scriptname keep" | grep -v grep )" ] || [ ! -s "`which curl`" ] && aliddns_restart
 	fi
 fi
 }
 
-cloudflare_keep () {
-cloudflare_start
-logger -t "【cloudflare动态域名】" "守护进程启动"
-cat >> "/tmp/script/_opt_script_check" <<-OSC
-[ -z "\`pidof Sh44_cloudflare.sh\`" ] && nvram set cloudflare_status=00 && logger -t "【cloudflare】" "重新启动" && eval "$scriptfilepath &" && sed -Ei '/【cloudflare】|^$/d' /tmp/script/_opt_script_check # 【cloudflare】
-OSC
+aliddns_keep () {
+aliddns_start
+logger -t "【AliDDNS动态域名】" "守护进程启动"
 while true; do
-sleep 43
-sleep $cloudflare_interval
-[ ! -s "`which curl`" ] && cloudflare_restart
-#nvramshow=`nvram showall | grep '=' | grep cloudflare | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
-cloudflare_enable=`nvram get cloudflare_enable`
-[ "$cloudflare_enable" = "0" ] && cloudflare_close && exit 0;
-if [ "$cloudflare_enable" = "1" ] ; then
-	cloudflare_start
+sleep $aliddns_interval
+[ ! -s "`which curl`" ] && aliddns_restart
+#nvramshow=`nvram showall | grep '=' | grep aliddns | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
+aliddns_enable=`nvram get aliddns_enable`
+[ "$aliddns_enable" = "0" ] && aliddns_close && exit 0;
+if [ "$aliddns_enable" = "1" ] ; then
+	aliddns_start
 fi
 done
 }
 
-cloudflare_close () {
-sed -Ei '/【cloudflare】|^$/d' /tmp/script/_opt_script_check
-kill_ps "$scriptname keep"
-kill_ps "/tmp/script/_cloudflare"
-kill_ps "_cloudflare.sh"
-kill_ps "$scriptname"
+kill_ps () {
+
+COMMAND="$1"
+if [ ! -z "$COMMAND" ] ; then
+	eval $(ps -w | grep "$COMMAND" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$COMMAND" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+if [ "$2" == "exit0" ] ; then
+	exit 0
+fi
 }
 
-cloudflare_start () {
-check_webui_yes
-curltest=`which curl`
-if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-	logger -t "【cloudflare动态域名】" "找不到 curl ，安装 opt mini 程序"
-	/etc/storage/script/Sh01_mountopt.sh opt_mini_wget
-	initopt
-	curltest=`which curl`
-	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-		logger -t "【cloudflare动态域名】" "找不到 curl ，需要手动安装 opt 后输入[opkg update; opkg install curl]安装"
-		logger -t "【cloudflare动态域名】" "启动失败, 10 秒后自动尝试重新启动" && sleep 10 && cloudflare_restart x
-	else
-		cloudflare_restart o
-	fi
-fi
+aliddns_close () {
+
+kill_ps "/tmp/script/_aliddns"
+kill_ps "_aliddns.sh"
+kill_ps "$scriptname"
+
+}
+
+aliddns_start () {
 IPv6=0
 if [ "$cloudflare_domian"x != "x" ] && [ "$cloudflare_host"x != "x" ] ; then
 	DOMAIN="$cloudflare_domian"
