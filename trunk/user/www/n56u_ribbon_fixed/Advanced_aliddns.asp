@@ -25,7 +25,7 @@ var $j = jQuery.noConflict();
 
 $j(document).ready(function() {
 
-	init_itoggle('cloudflare_enable',change_cloudflare_enable_bridge);
+	init_itoggle('aliddns_enable',change_aliddns_enable_bridge);
 
 });
 
@@ -168,7 +168,12 @@ function change_cloudflare_enable_bridge(mflag){
 	</ul></div>
 
 	<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
-	
+										<tr >
+											<th width="30%" style="border-top: 0 none;">上次运行:</th>
+											<td  colspan="3"style="border-top: 0 none;">
+											   <div >【<% nvram_get_x("","aliddns_last_act"); %>】</div>
+											</td>
+										</tr>
 	<tr>
 	<th width="30%" style="border-top: 0 none;"><a class="help_tooltip" href="javascript: void(0)" onmouseover="openTooltip(this, 26, 9);">启用 Cloudflare 域名解析</a></th>
 	<td style="border-top: 0 none;">
