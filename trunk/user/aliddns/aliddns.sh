@@ -11,10 +11,10 @@ scriptpath=$(cd "$(dirname "$0")"; pwd)
 #echo $scriptpath
 scriptname=$(basename $0)
 
-aliddns_enable=`nvram get cloudflare_enable`
+cloudflare_enable=`nvram get cloudflare_enable`
 [ -z $cloudflare_enable ] && cloudflare_enable=0 && nvram set cloudflare_enable=0
 if [ "$cloudflare_enable" != "0" ] ; then
-#nvramshow=`nvram showall | grep '=' | grep aliddns | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
+#nvramshow=`nvram showall | grep '=' | grep cloudflare | awk '{print gensub(/'"'"'/,"'"'"'\"'"'"'\"'"'"'","g",$0);}'| awk '{print gensub(/=/,"='\''",1,$0)"'\'';";}'` && eval $nvramshow
 
 cloudflare_token=`nvram get cloudflare_token`
 cloudflare_Email=`nvram get cloudflare_Email`
