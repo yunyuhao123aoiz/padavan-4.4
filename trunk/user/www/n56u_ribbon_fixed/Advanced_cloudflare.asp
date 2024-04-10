@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title><#Web_Title#> - Cloudflare 域名解析</title>
+<title><#Web_Title#> - Aliddns 域名解析</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
@@ -35,14 +35,14 @@ $j(document).ready(function() {
 <% login_state_hook(); %>
 
 function initial(){
-	show_banner(1);
-	 show_menu(8,<% nvram_get_x("", "cloudflare_L2"); %>,<% nvram_get_x("", "cloudflare_L3"); %>);
+	show_banner(2);
+	show_menu(5,17,0);
 	show_footer();
-
-	change_cloudflare_enable_bridge(1);
+	showmenu();
+	change_aliddns_enable_bridge(1);
 
 	if (!login_safe())
-	textarea_scripts_enabled(0);
+		textarea_scripts_enabled(0);
 }
 
 function showmenu(){
